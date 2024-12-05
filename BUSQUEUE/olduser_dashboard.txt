@@ -1,0 +1,267 @@
+<?php
+session_start();
+
+// Check if the user is logged in, redirect to login if not
+if   (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Get the username from the session
+$username = $_SESSION['username'];
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusQueue Dashboard</title>
+    <link rel="stylesheet" href="./style/user_dashboard.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <h2>BusQueue</h2>
+            <ul>
+                <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="map"><i class="fas fa-route"></i> Route</a></li>
+                <li><a href="pages/aboutus.html"><i class="fas fa-info-circle"></i> About us</a></li>
+                <li><a href="pages/feedback.html"><i class="fas fa-comments"></i> Feedback</a></li>
+                <li><a href="./components/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="top-bar">
+                <h1 style="text-align: center;">Bus Route Map</h1>
+                <div class="user-profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Welcome, <?php echo htmlspecialchars($username); ?></span>
+                </div>
+            </div>
+
+            <!-- Bus Route Data Section -->
+            <div class="route-data">
+                <h2>Available Bus Routes</h2>
+                <table id="routeTable">
+                    <thead>
+                        <tr>
+                            <th>Route Name</th>
+                            <th>Departure</th>
+                            <th>Arrival</th>
+                            <th>Status</th>
+                            <th>Estimated Arrival</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamically filled with JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bus Route Map -->
+            <div id="map" style="height: 500px;"></div>
+        </div>
+    </div>
+
+    
+    <script>
+        let markers = []; // Array to store markers
+        let polyline; // Store the polyline (route line)
+
+        // Function to fetch and display routes
+        function fetchRoutes() {
+
+            // ============json data fetching from routes.php=====================
+            fetch('./route/routes.php') // Fetch route data from routes.php  
+                .then(response => response.json())
+                .then(routes => {
+                    const tableBody = document.getElementById('routeTable').querySelector('tbody');
+                    tableBody.innerHTML = ''; // Clear existing rows
+                    markers.forEach(marker => marker.remove()); // Remove old markers
+                    markers = []; // Clear markers array
+                    if (polyline) {
+                        polyline.remove(); // Remove old route line
+                    }
+
+                    // Loop through the routes and create table rows
+                    routes.forEach(route => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${route.route_name}</td>
+                            <td>${route.departure}</td>
+                            <td>${route.arrival}</td>
+                            <td>${route.status}</td>
+                            <td>${route.stops[route.stops.length - 1].estimated_time}</td> <!-- Last stop's time -->
+                        `;
+                        tableBody.appendChild(row);
+
+                        // Plot the bus stops on the map
+                       
+
+                      
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching route data:', error);
+                });
+        }
+
+        // Fetch data immediately on page load
+        fetchRoutes();
+
+        // Update data every 10 seconds for real-time updates
+       // setInterval(fetchRoutes, 10000);
+
+        // Initialize the map (Leaflet.js)
+        const map = L.map('map').setView([27.675855, 85.431662], 13); // Default coordinates (adjust as needed)
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        //_____________//
+        
+//
+    var path1Coordinates = [
+   
+];
+
+// Define coordinates for the path
+var path2Coordinates = [
+    
+];
+
+
+
+// Add a polyline to visualize the path
+var path1 = L.polyline(path1Coordinates, {
+    color: 'blue',
+    weight: 5,
+    opacity: 0.5,
+}).addTo(map);
+var path2 = L.polyline(path2Coordinates, {
+    color: 'red',
+    weight: 5,
+    opacity: 0.5,
+}).addTo(map);
+
+// Add popups or interactions
+path1.bindPopup("Path 1: Blue");
+path2.bindPopup("Path 2: Red");
+
+
+// Custom bus icon
+var busIcon = L.icon({
+    iconUrl: 'ayus.png',  // path to your bus icon image
+    iconSize: [15, 10],  // adjust size as per your image
+    iconAnchor: [16, 16], // anchor to center of the icon
+    popupAnchor: [0, -16],  // optional: adjust popup anchor
+});
+var startingIndex1 = 2; // Bus 1 starts at the 3rd point of path1 (index 2)
+var startingIndex2 = 4; // Bus 2 starts at the 5th point of path2 (index 4)
+var startingIndex3 = 80; // Bus 3 starts at the 2nd point of path1 (index 1)
+var startingIndex4 = 30; // Bus 4 starts at the 4th point of path2 (index 3)
+
+// Initialize the markers with the bus icon at their respective starting points
+var busMarker1 = L.marker(path1Coordinates[startingIndex1], { icon: busIcon }).addTo(map);
+var busMarker2 = L.marker(path2Coordinates[startingIndex2], { icon: busIcon }).addTo(map);
+var busMarker3 = L.marker(path1Coordinates[startingIndex3], { icon: busIcon }).addTo(map);
+var busMarker4 = L.marker(path2Coordinates[startingIndex4], { icon: busIcon }).addTo(map);
+
+// Initialize indices for all buses
+var currentIndex1 = startingIndex1;
+var totalPoints1 = path1Coordinates.length;
+
+var currentIndex2 = startingIndex2;
+var totalPoints2 = path2Coordinates.length;
+
+var currentIndex3 = startingIndex3;
+var totalPoints3 = path1Coordinates.length;
+
+var currentIndex4 = startingIndex4;
+var totalPoints4 = path2Coordinates.length;
+
+// Function to animate the buses along their paths
+function animateBuses() {
+    // Animate bus 1 along path 1
+    if (currentIndex1 < totalPoints1) {
+        busMarker1.setLatLng(path1Coordinates[currentIndex1]);
+        currentIndex1++;
+    } else {
+        currentIndex1 = 0; // Loop back to the start of path 1
+    }
+
+    // Animate bus 2 along path 2
+    if (currentIndex2 < totalPoints2) {
+        busMarker2.setLatLng(path2Coordinates[currentIndex2]);
+        currentIndex2++;
+    } else {
+        currentIndex2 = 0; // Loop back to the start of path 2
+    }
+
+    // Animate bus 3 along path 1
+    if (currentIndex3 < totalPoints3) {
+        busMarker3.setLatLng(path1Coordinates[currentIndex3]);
+        currentIndex3++;
+    } else {
+        currentIndex3 = 0; // Loop back to the start of path 1
+    }
+
+    // Animate bus 4 along path 2
+    if (currentIndex4 < totalPoints4) {
+        busMarker4.setLatLng(path2Coordinates[currentIndex4]);
+        currentIndex4++;
+    } else {
+        currentIndex4 = 0; // Loop back to the start of path 2
+    }
+}
+
+// Move all bus markers every 1 second
+setInterval(animateBuses, 1000);
+
+        //-----------------------
+        var busStopIcon = L.icon({
+    iconUrl: 'bus.png', // Replace with the path to your icon
+    iconSize: [32, 32],            // Size of the icon
+    iconAnchor: [16, 32],          // Anchor point of the icon
+    popupAnchor: [0, -32]          // Popup position relative to the icon
+});
+
+// Coordinates for bus stops
+var busStops = [
+    [27.675364, 85.429755],
+    [27.674799, 85.426926],
+    [27.676053, 85.415170],
+    [27.666527, 85.417999],
+    [27.666454, 85.436485],
+    [27.676280, 85.437107],
+    [27.676117, 85.432091],
+    [27.679905, 85.398877],
+    [27.683045, 85.387633],
+    [27.682665, 85.389836],
+    [27.680628, 85.395273],
+    [27.682410, 85.382688],
+    [27.682819, 85.385555],
+    [27.679308, 85.401578],
+    [27.672009, 85.407384],
+    [27.673584, 85.377875],
+    [27.673949, 85.400263]
+];
+
+// Add a marker for each bus stop
+busStops.forEach(function (coords) {
+    L.marker(coords, { icon: busStopIcon }).addTo(map)
+        .bindPopup('Bus Stop'); // Optional: Add a popup to each marker
+});
+        // const marker = L.marker([27.675364, 85.429755]).addTo(map);
+
+        // Add a popup to the marker
+        //marker.bindPopup('<b>Hello Kathmandu!</b><br>This is a marker.').openPopup();
+    </script>
+</body>
+</html>
