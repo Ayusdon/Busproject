@@ -32,7 +32,7 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Routes Data</title>
-    <link rel="stylesheet" href="./style/admin.css">
+    <link rel="stylesheet" href="../style/route.css">
 </head>
 <body>
     <h2>Routes Information</h2>
