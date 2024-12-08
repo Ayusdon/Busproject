@@ -124,24 +124,59 @@ $username = $_SESSION['username'];
 
     <script>
         // Initialize the map
-        const map = L.map('map').setView([27.675855, 85.431662], 13); // Adjust coordinates and zoom level as needed
+        const map = L.map('map').setView([27.675855, 85.431662], 13);
 
         // Add OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Optional: Add a marker for demonstration
-        
-        L.Routing.control({
-  waypoints: [
-        L.latLng(27.675855, 85.431662), // Start point
-        L.latLng(30.67685, 85.432662),
-        //L.latLng(27.677855, 85.433662),
-        L.latLng(27.675855, 85.434662) // Loop back to start point
-        //L.latLng(27.675855, 85.431662)
-  ]
-}).addTo(map);
+        // Define a custom bus icon
+        const busIcon = L.icon({
+            iconUrl: 'ayus.png', // Path to your custom icon image
+            iconSize: [20, 15], // Size of the icon
+            iconAnchor: [20, 20], // Anchor point of the icon (centered)
+            popupAnchor: [0, -0] // Position of the popup relative to the icon
+        });
+
+        // Define circular route waypoints
+        const circularRoute = [
+            L.latLng(27.706812, 85.314924), // Point A
+          //Point C
+            L.latLng(27.680855, 85.426662), // Point D
+              // Back to Point A
+        ];
+
+        // Add routing control
+        const control = L.Routing.control({
+            waypoints: circularRoute,
+            routeWhileDragging: false,
+            draggableWaypoints: false,
+            addWaypoints: false,
+            createMarker: function() { return null; } // Disable default markers
+        }).addTo(map);
+
+        // Add a custom bus marker
+        const busMarker = L.marker(circularRoute[0], { icon: busIcon }).addTo(map);
+
+        // Wait for the route to be calculated
+        control.on('routesfound', function(e) {
+            const routeCoordinates = e.routes[0].coordinates; // Get route coordinates
+            let currentIndex = 0;
+
+            // Function to move the bus marker
+            function moveBus() {
+                if (currentIndex < routeCoordinates.length) {
+                    busMarker.setLatLng(routeCoordinates[currentIndex]); // Update position
+                    currentIndex++;
+                } else {
+                    currentIndex = 0; // Reset to loop the movement
+                }
+            }
+
+            // Start moving the bus with a delay between steps
+            setInterval(moveBus, 500); // Adjust the interval for speed (100ms = faster)
+        });
     </script>
 </body>
 </html>

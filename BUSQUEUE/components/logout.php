@@ -3,6 +3,8 @@
 session_start();
 session_unset();
 session_destroy();
-// ======= when  actor logout redirect to login.php destroying sesson =======
-header("Location: ../login.php");
+
+// ======= when user logs out, redirect to login.php, destroying the session =======
+header("Location:../login.php");
+exit();
 ?>
