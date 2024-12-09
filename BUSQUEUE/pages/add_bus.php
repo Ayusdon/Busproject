@@ -64,6 +64,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style/add_bus.css">
     <title>Add Bus</title>
 </head>
 <body>
@@ -79,7 +80,9 @@ $conn->close();
 
         <button type="submit">Add Bus</button>
     </form>
-
+    <button onclick="window.location.href='../admin_dashboard.php'" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">
+        Go to Admin Dashboard
+    </button>
     <!-- Display error message if bus number already exists -->
     <?php if (isset($error_message)): ?>
         <div style="color: red;"><?= $error_message ?></div>

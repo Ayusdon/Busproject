@@ -1,0 +1,85 @@
+/* General Body Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+p {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    margin-top: 10px;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    background: #ffffff;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+table th, table td {
+    padding: 12px 20px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+table th {
+    background-color: #2980b9;
+    color: white;
+    font-size: 1rem;
+    text-transform: uppercase;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f4f6f9;
+}
+
+table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+table tbody tr:hover {
+    background-color: #e1e6eb;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    table {
+        width: 100%;
+        font-size: 0.85rem;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+}

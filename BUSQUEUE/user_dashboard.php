@@ -16,9 +16,9 @@ $username = $_SESSION['username'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BusQueue Dashboard</title>
-    <link rel="stylesheet" href="./style/user_dashboard.css">
+    <link rel="stylesheet" href="../style/user_dashboard.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" /> -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
@@ -104,9 +104,10 @@ $username = $_SESSION['username'];
         <h2>BusQueue</h2>
         <ul>
             <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
-            <li><a href="pages/route.php"><i class="fas fa-route"></i> Route</a></li>
+            <li><a href="pages/route.php "><i class="fas fa-route"></i> Route</a></li>
             <li><a href="pages/aboutus.html"><i class="fas fa-info-circle"></i> About us</a></li>
             <li><a href="pages/feedback.html"><i class="fas fa-comments"></i> Feedback</a></li>
+            <li><a href="pages/userdetails.php"><i class="fas fa-user"></i> Account</a></li>
             <li><a href="./components/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </div>
@@ -124,7 +125,7 @@ $username = $_SESSION['username'];
 
     <script>
         // Initialize the map
-        const map = L.map('map').setView([27.675855, 85.431662], 13);
+          const map = L.map('map').setView([27.675855, 85.431662], 13); // Default coordinates (adjust as needed)
 
         // Add OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

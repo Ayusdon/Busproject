@@ -104,7 +104,7 @@ $conn->close();
     <input type="time" id="departure_time" name="departure_time" required>
 
     <button type="submit">Deploy Bus</button>
-    <a href="pages/add_bus.php">Add Bus and Route</a>
+    <a href="pages/add_bus.php">Add New Bus and Route</a>
 
 </form>
 

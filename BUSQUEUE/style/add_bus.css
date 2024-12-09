@@ -1,0 +1,178 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* Container */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header Styling */
+h2 {
+    text-align: center;
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+/* Form Styling */
+form {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #495057;
+}
+
+form select,
+form input[type="text"],
+form input[type="time"],
+form button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 14px;
+}
+
+form select,
+form input[type="text"],
+form input[type="time"] {
+    background-color: #f8f9fa;
+}
+
+form button {
+    background-color: #28a745;
+    color: #ffffff;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+form button:hover {
+    background-color: #218838;
+    transform: scale(1.02);
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+table th,
+table td {
+    padding: 14px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+table th {
+    background-color: #007bff;
+    color: white;
+    text-transform: uppercase;
+}
+
+table td {
+    background-color: #ffffff;
+}
+
+table tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Button Styling */
+button {
+    padding: 10px 16px;
+    background-color: #dc3545;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #c82333;
+}
+
+/* Links */
+a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 14px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Logout Button */
+a.logout {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+a.logout:hover {
+    background-color: #c82333;
+}
+
+/* Media Query for Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+
+    table th,
+    table td {
+        font-size: 12px;
+    }
+
+    form {
+        padding: 15px;
+    }
+
+    form button {
+        font-size: 13px;
+    }
+
+    button {
+        font-size: 13px;
+    }
+}
