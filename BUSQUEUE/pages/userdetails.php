@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <!-- Button to redirect to the dashboard -->
 <button onclick="window.location.href='../user_dashboard.php';" 
         style="background-color: #007bff; margin-top:20px; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">
-    Go to Admin Dashboard
+    Go to user dashboard Dashboard
 </button>
 </body>
 </html>

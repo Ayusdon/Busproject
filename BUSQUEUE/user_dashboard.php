@@ -9,16 +9,51 @@ if (!isset($_SESSION['username'])) {
 
 // Get the username from the session
 $username = $_SESSION['username'];
+
+// Database connection
+$host = 'localhost';
+$db_user = 'root';
+$db_password = '';
+$db_name = 'bus_queue';
+$conn = new mysqli($host, $db_user, $db_password, $db_name);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch route and bus data
+$routeData = [];
+$sql = "
+    SELECT 
+        rs.id AS schedule_id, 
+        rs.route_id, 
+        r.route_name, 
+        r.start_lat, r.start_lng, r.end_lat, r.end_lng, 
+        b.bus_name, 
+        rs.departure_time 
+    FROM route_schedule rs 
+    JOIN route r ON rs.route_id = r.id 
+    JOIN bus b ON rs.bus_id = b.id
+";
+$result = $conn->query($sql);
+
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $routeData[] = $row;
+    }
+}
+
+$conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BusQueue Dashboard</title>
-    <link rel="stylesheet" href="../style/user_dashboard.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" /> -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
@@ -122,35 +157,51 @@ $username = $_SESSION['username'];
         </div>
         <div id="map"></div>
     </div>
+</style>
+</head>
+<body>
+    
 
     <script>
-        // Initialize the map
-          const map = L.map('map').setView([27.675855, 85.431662], 13); // Default coordinates (adjust as needed)
+    // Initialize the map
+    const map = L.map('map').setView([27.675855, 85.431662], 13);
 
-        // Add OpenStreetMap tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
 
-        // Define a custom bus icon
-        const busIcon = L.icon({
-            iconUrl: 'ayus.png', // Path to your custom icon image
-            iconSize: [20, 15], // Size of the icon
-            iconAnchor: [20, 20], // Anchor point of the icon (centered)
-            popupAnchor: [0, -0] // Position of the popup relative to the icon
-        });
+    // Define a custom bus icon
+    const busIcon = L.icon({
+        iconUrl: 'ayus.png', // Adjust with your image path
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+    });
 
-        // Define circular route waypoints
+    // PHP data to JavaScript
+    const routes = <?php echo json_encode($routeData); ?>;
+
+    // Loop through each route and animate the bus along the route
+    routes.forEach(route => {
+        const startLatLng = [route.start_lat, route.start_lng];
+        const endLatLng = [route.end_lat, route.end_lng];
+
+        // Define route waypoints
+        const routeWaypoints = [
+            L.latLng(startLatLng),
+            L.latLng(endLatLng),
+            L.latLng(startLatLng) 
+            // Add the starting point again for smooth looping
+        ];
         const circularRoute = [
             L.latLng(27.706812, 85.314924), // Point A
           //Point C
             L.latLng(27.680855, 85.426662), // Point D
               // Back to Point A
         ];
-
-        // Add routing control
+        // Add routing control for the route
         const control = L.Routing.control({
-            waypoints: circularRoute,
+            waypoints: routeWaypoints,
             routeWhileDragging: false,
             draggableWaypoints: false,
             addWaypoints: false,
@@ -158,7 +209,7 @@ $username = $_SESSION['username'];
         }).addTo(map);
 
         // Add a custom bus marker
-        const busMarker = L.marker(circularRoute[0], { icon: busIcon }).addTo(map);
+        const busMarker = L.marker(startLatLng, { icon: busIcon }).addTo(map);
 
         // Wait for the route to be calculated
         control.on('routesfound', function(e) {
@@ -171,13 +222,16 @@ $username = $_SESSION['username'];
                     busMarker.setLatLng(routeCoordinates[currentIndex]); // Update position
                     currentIndex++;
                 } else {
-                    currentIndex = 0; // Reset to loop the movement
+                    currentIndex = 0; // Loop back to the start smoothly
                 }
             }
 
             // Start moving the bus with a delay between steps
-            setInterval(moveBus, 500); // Adjust the interval for speed (100ms = faster)
+            setInterval(moveBus, 500); // Adjust the interval for speed (500ms = moderate speed)
         });
-    </script>
+    });
+    
+</script>
+
 </body>
 </html>
